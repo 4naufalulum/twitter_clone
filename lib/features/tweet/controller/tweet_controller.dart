@@ -12,10 +12,15 @@ import 'package:twitter_clone/models/tweet_model.dart';
 final tweetControllerProvider =
     StateNotifierProvider<TweetController, bool>((ref) {
   return TweetController(
-    ref: ref, 
+    ref: ref,
     tweetAPI: ref.watch(tweetAPIProvider),
     storageAPI: ref.watch(storageAPIProvider),
   );
+});
+
+final getTweetsProvider = FutureProvider((ref) {
+  final TweetController = ref.watch(tweetControllerProvider.notifier);
+  return TweetController.getTweets();
 });
 
 class TweetController extends StateNotifier<bool> {
@@ -30,6 +35,11 @@ class TweetController extends StateNotifier<bool> {
         _tweetAPI = tweetAPI,
         _storageAPI = storageAPI,
         super(false);
+
+  Future<List<Tweet>> getTweets() async {
+    final tweetList = await _tweetAPI.getTweets();
+    return tweetList.map((tweet) => Tweet.fromMap(tweet.data)).toList();
+  }
 
   void shareTweet({
     required List<File> images,

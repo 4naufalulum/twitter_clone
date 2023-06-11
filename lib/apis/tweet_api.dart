@@ -7,12 +7,12 @@ import 'package:twitter_clone/core/core.dart';
 import 'package:twitter_clone/models/tweet_model.dart';
 
 final tweetAPIProvider = Provider((ref) {
-  return TweetAPI(
-    db: ref.watch(appwriteDatabaseProvider));
+  return TweetAPI(db: ref.watch(appwriteDatabaseProvider));
 });
 
 abstract class ITweetAPI {
   FutureEither<Document> shareTweet(Tweet tweet);
+  Future<List<Document>> getTweets();
 }
 
 class TweetAPI implements ITweetAPI {
@@ -33,5 +33,14 @@ class TweetAPI implements ITweetAPI {
     } catch (e, stackTrace) {
       return left(Failure(e.toString(), stackTrace));
     }
+  }
+
+  @override
+  Future<List<Document>> getTweets() async {
+    final documents = await _db.listDocuments(
+      databaseId: AppwriteConstants.databaseId,
+      collectionId: AppwriteConstants.tweetsCollection,
+    );
+    return documents.documents;
   }
 }
