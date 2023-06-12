@@ -17,6 +17,7 @@ abstract class ITweetAPI {
   FutureEither<Document> shareTweet(Tweet tweet);
   Future<List<Document>> getTweets();
   Stream<RealtimeMessage> getLatestTweet();
+  FutureEither<Document> likeTweet(Tweet tweet);
 }
 
 class TweetAPI implements ITweetAPI {
@@ -59,5 +60,24 @@ class TweetAPI implements ITweetAPI {
     return _realtime.subscribe([
       'databases.${AppwriteConstants.databaseId}.collections.${AppwriteConstants.tweetsCollection}.documents'
     ]).stream;
+  }
+  
+  @override
+  FutureEither<Document> likeTweet(Tweet tweet) async {
+    try {
+      final document = await _db.updateDocument(
+        databaseId: AppwriteConstants.databaseId,
+        collectionId: AppwriteConstants.tweetsCollection,
+        documentId: tweet.id,
+        data: {
+          'likes': tweet.likes,
+        },
+      );
+      return right(document);
+    } on AppwriteException catch (e, stackTrace) {
+      return left(Failure(e.message ?? 'Some unexpected error', stackTrace));
+    } catch (e, stackTrace) {
+      return left(Failure(e.toString(), stackTrace));
+    }
   }
 }
