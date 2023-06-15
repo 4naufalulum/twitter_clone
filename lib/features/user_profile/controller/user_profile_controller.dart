@@ -9,7 +9,8 @@ import 'package:twitter_clone/core/utils.dart';
 import 'package:twitter_clone/models/tweet_model.dart';
 import 'package:twitter_clone/models/user_model.dart';
 
-final userProfileControllerProvider = StateNotifierProvider<UserProfileController, bool>((ref) {
+final userProfileControllerProvider =
+    StateNotifierProvider<UserProfileController, bool>((ref) {
   return UserProfileController(
     tweetAPI: ref.watch(tweetAPIProvider),
     storageAPI: ref.watch(storageAPIProvider),
@@ -21,6 +22,11 @@ final getUserTweetsProvider = FutureProvider.family((ref, String uid) async {
   final userProfileController =
       ref.watch(userProfileControllerProvider.notifier);
   return userProfileController.getUserTweets(uid);
+});
+
+final getLatestUserProfileDataProvider = StreamProvider((ref) {
+  final userAPI = ref.watch(userAPIProvider);
+  return userAPI.getLatestUserProfileData();
 });
 
 class UserProfileController extends StateNotifier<bool> {

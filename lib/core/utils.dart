@@ -28,6 +28,7 @@ Future<List<File>> pickImages() async {
 }
 
 Future<File?> pickImage() async {
+  // ignore: unused_local_variable
   List<File> images = [];
   final ImagePicker picker = ImagePicker();
   final imageFile = await picker.pickImage(source: ImageSource.gallery);
